@@ -1,0 +1,67 @@
+SYSTEM:
+  NUM_GPUS: 1
+  NUM_CPUS: 16
+MODEL:
+  ARCHITECTURE: unet_plus_3d
+  BLOCK_TYPE: residual_se
+  INPUT_SIZE: [17, 225, 225]
+  OUTPUT_SIZE: [17, 225, 225]
+  IN_PLANES: 1
+  NORM_MODE: sync_bn
+  FILTERS: [32, 64, 96, 128, 160]
+# DATASET:
+#   # IMAGE_NAME: ["im_train.json"]
+#   # LABEL_NAME: ["mito_train.json"]
+#   # INPUT_PATH: datasets/MitoEM_R/ # or your own dataset path
+#   # OUTPUT_PATH: outputs/MitoEM_R/
+#   INPUT_PATH: waspsyn/waspsyn_dataset/training_set/
+#   OUTPUT_PATH: waspsyn/waspsyn_dataset/training_set/model_baseline 
+#   # PAD_SIZE: [4, 64, 64]
+#   # DO_CHUNK_TITLE: 1
+#   DATA_CHUNK_NUM: [20, 7, 8]
+#   DATA_CHUNK_ITER: 10000
+DATASET:
+  IMAGE_NAME:
+    - train_sample3_vol0/img_zyx_2217-2617_4038-4448_6335-6735.h5
+    - train_sample3_vol1/img_zyx_3680-4096_2944-3360_4448-4864.h5
+    - train_sample3_vol2/img_zyx_3776-4192_6048-6464_9248-9664.h5
+    - train_sample3_vol3/img_zyx_5152-5568_3168-3584_8384-8800.h5
+    - train_sample3_vol4/img_zyx_1920-2336_4832-5248_6528-6944.h5
+  LABEL_NAME:
+    - points_labels/vol0_point_pre_labels.h5
+    - points_labels/vol1_point_pre_labels.h5
+    - points_labels/vol2_point_pre_labels.h5
+    - points_labels/vol3_point_pre_labels.h5
+    - points_labels/vol4_point_pre_labels.h5
+    # - pre_labels_new/vol0.h5
+    # - pre_labels_new/vol1.h5
+    # - pre_labels_new/vol2.h5
+    # - pre_labels_new/vol3.h5
+    # - pre_labels_new/vol4.h5
+  INPUT_PATH: waspsyn/waspsyn_dataset/training_set/
+  OUTPUT_PATH: waspsyn/waspsyn_dataset/training_set/model_gaussian_sig5
+  PAD_SIZE: [4, 48, 48]
+  DISTRIBUTED: True
+  REJECT_SAMPLING:
+    SIZE_THRES: 2000
+    P: 0.95
+  DATA_CHUNK_NUM: [20, 7, 8] # only for inference
+SOLVER:
+  LR_SCHEDULER_NAME: WarmupCosineLR
+  BASE_LR: 0.04
+  ITERATION_STEP: 1
+  ITERATION_SAVE: 5000
+  ITERATION_TOTAL: 200000
+  SAMPLES_PER_BATCH: 2
+INFERENCE:
+  INPUT_SIZE: [17, 257, 257]
+  OUTPUT_SIZE: [17, 257, 257]
+  INPUT_PATH: waspsyn/waspsyn_dataset/training_set/train_sample3_vol4/
+  IMAGE_NAME: img_zyx_1920-2336_4832-5248_6528-6944.h5 # replace this with im_val.json to run validation
+  OUTPUT_PATH: waspsyn/waspsyn_dataset/training_set/model_gaussian_sig5/training_testing/vol4
+  OUTPUT_NAME: vol4_res.h5 # will automatically save to HDF5
+  PAD_SIZE: [4, 64, 64]
+  AUG_MODE: mean
+  AUG_NUM: 4
+  STRIDE: [8, 128, 128]
+  SAMPLES_PER_BATCH: 8
