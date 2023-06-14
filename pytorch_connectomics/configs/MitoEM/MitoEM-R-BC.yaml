@@ -1,0 +1,22 @@
+MODEL:
+  OUT_PLANES: 1
+  # TARGET_OPT: ["0", "4-1-1"]
+  TARGET_OPT: ["A-5"]
+  LOSS_OPTION:
+    - - WeightedBCEWithLogitsLoss
+      - DiceLoss
+    # - - WeightedBCEWithLogitsLoss
+    #   - DiceLoss
+  LOSS_WEIGHT: [[1.0, 0.5]]
+  WEIGHT_OPT: [["1", "0"]]
+  OUTPUT_ACT: [["none", "sigmoid"]]
+  # LOSS_WEIGHT: [[1.0, 0.5], [1.0, 0.5]]
+  # WEIGHT_OPT: [["1", "0"], ["1", "0"]]
+  # OUTPUT_ACT: [["none", "sigmoid"], ["none", "sigmoid"]]
+INFERENCE:
+  OUTPUT_ACT: ["sigmoid"]
+  # OUTPUT_ACT: ["sigmoid", "sigmoid"]
+  OUTPUT_PATH: waspsyn/waspsyn_dataset/training_set/model_gaussian_sig5/training_testing/vol4
+DATASET:
+  # OUTPUT_PATH: outputs/MitoEM_R_BC/
+  OUTPUT_PATH: waspsyn/waspsyn_dataset/training_set/model_baseline
